@@ -307,7 +307,7 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 							transition={{ delay: 0.3, duration: 0.5 }}
 						>
 							<div className='flex flex-col-reverse md:flex-row md:justify-between items-center md:items-end mb-6 gap-4 text-center md:text-left'>
-								<div className='flex items-center gap-3'>
+								<div className='flex flex-col md:flex-row items-center gap-3'>
 									<h1 className='text-5xl font-black capitalize text-base-content tracking-tight'>{pokemon.name}</h1>
 									{pokemon.cries?.latest && (
 										<>
