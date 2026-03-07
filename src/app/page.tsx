@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchAllPokemonAsync, fetchTypesAsync, fetchPokemonByTypeAsync, setFilterType, setSearch } from '@/store/slices/pokemonSlice';
 import { PokemonCard } from '@/components/organisms/PokemonCard';
 import { Filter } from '@/components/molecules/Filter';
-import { TechBackground } from '@/components/templates/TechBackground';
+import { TechBackground } from '@/components/atoms/TechBackground';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DashboardPokemonDetail } from '@/types/pokemon';
 import { GEN_RANGES } from '@/utils/constants';

@@ -1,11 +1,9 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { SearchablePokemonSelector } from '@/components/molecules/SearchablePokemonSelector';
-import { PokemonTypeBadge } from '@/components/atoms/PokemonTypeBadge';
+import { ComparisonPokemonCard } from '@/components/molecules/ComparisonPokemonCard';
 import { DashboardPokemonDetail } from '@/types/pokemon';
 
 interface PokemonComparisonProps {
@@ -67,47 +65,7 @@ export const PokemonComparison = ({ pokemonList }: PokemonComparisonProps) => {
 						onSelect={setSelectedId1}
 						pokemonList={sortedList}
 					/>
-
-					{pokemon1 ? (
-						<Link
-							href={`/pokemon/${pokemon1.name}?from=dashboard`}
-							className='flex-1 flex flex-col items-center justify-center text-center space-y-4 hover:bg-white/5 rounded-xl transition-all cursor-pointer group'
-						>
-							<div className='avatar'>
-								<div className='w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 bg-base-200 shadow-lg group-hover:scale-110 transition-transform duration-300 relative overflow-hidden'>
-									<Image src={pokemon1.image} alt={pokemon1.name} fill className='object-cover' sizes='96px' />
-								</div>
-							</div>
-							<div>
-								<h2 className='font-bold capitalize text-2xl group-hover:text-primary transition-colors'>
-									{pokemon1.name}
-								</h2>
-								<div className='flex gap-1 mt-2 justify-center flex-wrap'>
-									{pokemon1.types.map((t) => (
-										<PokemonTypeBadge key={t} type={t} className='badge badge-sm border-none' />
-									))}
-								</div>
-							</div>
-							<div className='w-full bg-base-100/40 rounded-lg p-3'>
-								<div className='text-xs opacity-60 uppercase tracking-widest mb-1'>Total Power</div>
-								<div className='text-3xl font-black text-primary'>{pokemon1.total}</div>
-							</div>
-							<div className='w-full grid grid-cols-2 gap-2 text-xs'>
-								<div className='flex flex-col bg-base-100/30 p-2 rounded'>
-									<span className='opacity-50'>Height</span>
-									<span className='font-bold'>{pokemon1.height}m</span>
-								</div>
-								<div className='flex flex-col bg-base-100/30 p-2 rounded'>
-									<span className='opacity-50'>Weight</span>
-									<span className='font-bold'>{pokemon1.weight}kg</span>
-								</div>
-							</div>
-						</Link>
-					) : (
-						<div className='flex-1 flex items-center justify-center text-base-content/20 text-sm italic border-2 border-dashed border-base-content/10 rounded-xl'>
-							Select Player 1
-						</div>
-					)}
+					<ComparisonPokemonCard pokemon={pokemon1} color='primary' placeholder='Select Player 1' />
 				</div>
 
 				{/* Center: Chart */}
@@ -176,47 +134,7 @@ export const PokemonComparison = ({ pokemonList }: PokemonComparisonProps) => {
 						pokemonList={sortedList}
 						align='right'
 					/>
-
-					{pokemon2 ? (
-						<Link
-							href={`/pokemon/${pokemon2.name}?from=dashboard`}
-							className='flex-1 flex flex-col items-center justify-center text-center space-y-4 hover:bg-white/5 rounded-xl transition-all cursor-pointer group'
-						>
-							<div className='avatar'>
-								<div className='w-24 h-24 rounded-full ring ring-secondary ring-offset-base-100 ring-offset-2 bg-base-200 shadow-lg group-hover:scale-110 transition-transform duration-300 relative overflow-hidden'>
-									<Image src={pokemon2.image} alt={pokemon2.name} fill className='object-cover' sizes='96px' />
-								</div>
-							</div>
-							<div>
-								<h2 className='font-bold capitalize text-2xl group-hover:text-secondary transition-colors'>
-									{pokemon2.name}
-								</h2>
-								<div className='flex gap-1 mt-2 justify-center flex-wrap'>
-									{pokemon2.types.map((t) => (
-										<PokemonTypeBadge key={t} type={t} className='badge badge-sm border-none' />
-									))}
-								</div>
-							</div>
-							<div className='w-full bg-base-100/40 rounded-lg p-3'>
-								<div className='text-xs opacity-60 uppercase tracking-widest mb-1'>Total Power</div>
-								<div className='text-3xl font-black text-secondary'>{pokemon2.total}</div>
-							</div>
-							<div className='w-full grid grid-cols-2 gap-2 text-xs'>
-								<div className='flex flex-col bg-base-100/30 p-2 rounded'>
-									<span className='opacity-50'>Height</span>
-									<span className='font-bold'>{pokemon2.height}m</span>
-								</div>
-								<div className='flex flex-col bg-base-100/30 p-2 rounded'>
-									<span className='opacity-50'>Weight</span>
-									<span className='font-bold'>{pokemon2.weight}kg</span>
-								</div>
-							</div>
-						</Link>
-					) : (
-						<div className='flex-1 flex items-center justify-center text-base-content/20 text-sm italic border-2 border-dashed border-base-content/10 rounded-xl'>
-							Select Player 2
-						</div>
-					)}
+					<ComparisonPokemonCard pokemon={pokemon2} color='secondary' placeholder='Select Player 2' />
 				</div>
 			</div>
 		</div>

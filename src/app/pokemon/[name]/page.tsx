@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchPokemonDetailAsync, fetchEvolutionChainAsync } from '@/store/slices/pokemonSlice';
 import { PokemonDetail } from '@/components/organisms/PokemonDetail';
 import { EvolutionChain } from '@/components/organisms/EvolutionChain';
-import { TechBackground } from '@/components/templates/TechBackground';
+import { TechBackground } from '@/components/atoms/TechBackground';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
