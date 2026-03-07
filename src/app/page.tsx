@@ -51,6 +51,7 @@ export default function Home() {
 			const parts = p.url.split('/');
 			const id = parts[parts.length - 2];
 			return {
+				id: parseInt(id),
 				name: p.name,
 				types: [], // Not available in simple list
 				stats: { hp: 0, attack: 0, defense: 0, 'special-attack': 0, 'special-defense': 0, speed: 0 },
