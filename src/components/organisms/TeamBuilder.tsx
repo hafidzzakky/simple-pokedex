@@ -55,7 +55,7 @@ export const TeamBuilder = () => {
 			{/* Header */}
 			<div className='sticky top-0 z-40 bg-base-100/80 backdrop-blur-md border-b border-base-200/50 w-full shadow-sm'>
 				<div className='container mx-auto px-4 py-4 max-w-[1600px]'>
-					<div className='flex flex-col md:flex-row items-center justify-between gap-4'>
+					<div className='flex flex-col md:flex-row items-start md:items-center justify-between gap-4'>
 						<div className='flex items-center gap-4'>
 							<Link href='/' className='btn btn-ghost btn-sm btn-circle'>
 								<ChevronLeft className='h-6 w-6' />
@@ -67,7 +67,7 @@ export const TeamBuilder = () => {
 						</div>
 
 						{/* Team Stats Summary */}
-						<div className='flex gap-4 items-center bg-base-100/50 px-4 py-2 rounded-xl border border-base-200/50'>
+						<div className='flex gap-4 items-center bg-base-100/50 px-4 py-2 rounded-xl border border-base-200/50 w-full md:w-auto justify-center md:justify-start'>
 							<div className='text-center'>
 								<div className='text-xs text-base-content/40 uppercase font-bold'>Count</div>
 								<div className='font-black text-lg'>{teamStats.count}/6</div>
