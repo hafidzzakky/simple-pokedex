@@ -3,6 +3,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { getPokemonBasicInfo } from '@/services/pokemon';
+import { TYPE_COLORS } from '@/utils/constants';
 
 interface PokemonCardProps {
 	name: string;
@@ -12,6 +15,27 @@ interface PokemonCardProps {
 export const PokemonCard = ({ name, url }: PokemonCardProps) => {
 	const id = url.split('/').filter(Boolean).pop();
 	const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+	const [types, setTypes] = useState<string[]>([]);
+
+	useEffect(() => {
+		let isMounted = true;
+		const fetchTypes = async () => {
+			try {
+				const data = await getPokemonBasicInfo(name);
+				if (isMounted) {
+					setTypes(data.types);
+				}
+			} catch (error) {
+				console.error('Failed to fetch pokemon types', error);
+			}
+		};
+
+		fetchTypes();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [name]);
 
 	return (
 		<Link href={`/pokemon/${name}`} className='block h-full'>
@@ -34,7 +58,22 @@ export const PokemonCard = ({ name, url }: PokemonCardProps) => {
 
 				<div className='mt-auto w-full text-center'>
 					<span className='text-base-content/60 text-xs font-mono mb-1 block'>#{String(id).padStart(3, '0')}</span>
-					<h3 className='text-lg font-bold capitalize text-base-content tracking-tight'>{name}</h3>
+					<h3 className='text-lg font-bold capitalize text-base-content tracking-tight mb-2'>{name}</h3>
+					<div className='flex gap-1 justify-center flex-wrap'>
+						{types.length > 0
+							? types.map((type) => (
+									<span
+										key={type}
+										className={`${
+											TYPE_COLORS[type] || 'bg-gray-500'
+										} text-white text-[10px] px-2 py-0.5 rounded-full capitalize shadow-sm`}
+									>
+										{type}
+									</span>
+							  ))
+							: // Skeleton loader for types
+							  [1, 2].map((i) => <div key={i} className='h-4 w-12 bg-base-300 rounded-full animate-pulse' />)}
+					</div>
 				</div>
 			</motion.div>
 		</Link>

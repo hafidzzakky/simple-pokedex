@@ -12,6 +12,13 @@ export const getPokemonList = async (limit = 20, offset = 0) => {
 	return response.data;
 };
 
+export const getPokemonBasicInfo = async (name: string) => {
+	const response = await api.get(`/pokemon/${name}`);
+	return {
+		types: response.data.types.map((t: any) => t.type.name),
+	};
+};
+
 export const getPokemonDetail = async (name: string): Promise<PokemonDetail> => {
 	const response = await api.get(`/pokemon/${name}`);
 	const data = response.data;

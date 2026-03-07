@@ -7,6 +7,7 @@ import { PokemonDetail as PokemonDetailType } from '@/types/pokemon';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Ruler, Weight, Zap, Shield, BarChart3, X, Activity, Target, Crosshair, ChevronLeft, ChevronRight } from 'lucide-react';
+import { TYPE_COLORS } from '@/utils/constants';
 
 interface PokemonDetailProps {
 	pokemon: PokemonDetailType;
@@ -23,33 +24,13 @@ interface MoveDetail {
 	flavor_text_entries: { flavor_text: string; language: { name: string } }[];
 }
 
-const typeColors: Record<string, string> = {
-	normal: 'bg-gray-400',
-	fire: 'bg-orange-500',
-	water: 'bg-blue-500',
-	electric: 'bg-yellow-400',
-	grass: 'bg-green-500',
-	ice: 'bg-cyan-300',
-	fighting: 'bg-red-700',
-	poison: 'bg-purple-500',
-	ground: 'bg-amber-600',
-	flying: 'bg-indigo-400',
-	psychic: 'bg-pink-500',
-	bug: 'bg-lime-600',
-	rock: 'bg-stone-600',
-	ghost: 'bg-violet-700',
-	dragon: 'bg-indigo-700',
-	steel: 'bg-slate-500',
-	fairy: 'bg-pink-300',
-};
-
 export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 	const imageUrl =
 		pokemon.image ||
 		`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
 
 	const primaryType = pokemon.types[0];
-	const themeColor = typeColors[primaryType] || 'bg-gray-500';
+	const themeColor = TYPE_COLORS[primaryType] || 'bg-gray-500';
 
 	const [selectedMove, setSelectedMove] = useState<MoveDetail | null>(null);
 	const [isLoadingMove, setIsLoadingMove] = useState(false);
