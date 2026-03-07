@@ -8,6 +8,7 @@ import { PokemonCard } from '@/components/PokemonCard';
 import { Filter } from '@/components/Filter';
 import { TechBackground } from '@/components/TechBackground';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DashboardPokemonDetail } from '@/types/pokemon';
 
 export default function Home() {
 	const dispatch = useAppDispatch();
@@ -43,6 +44,24 @@ export default function Home() {
 	};
 
 	const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+	const pokemonList = useMemo<DashboardPokemonDetail[]>(() => {
+		return list.map((p) => {
+			// Extract ID from URL
+			const parts = p.url.split('/');
+			const id = parts[parts.length - 2];
+			return {
+				name: p.name,
+				types: [], // Not available in simple list
+				stats: { hp: 0, attack: 0, defense: 0, 'special-attack': 0, 'special-defense': 0, speed: 0 },
+				total: 0,
+				isLegendary: false,
+				height: 0,
+				weight: 0,
+				image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+			};
+		});
+	}, [list]);
 
 	const filteredList = useMemo(() => {
 		return list.filter((pokemon) => pokemon.name.toLowerCase().includes(filter.search.toLowerCase()));
@@ -142,6 +161,7 @@ export default function Home() {
 						searchValue={filter.search}
 						onTypeChange={handleTypeChange}
 						onSearchChange={handleSearchChange}
+						pokemonList={pokemonList}
 					/>
 				</div>
 			</div>

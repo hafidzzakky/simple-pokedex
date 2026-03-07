@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Search, Filter as FilterIcon, ChevronDown } from 'lucide-react';
+import { SearchablePokemonSelector } from './SearchablePokemonSelector';
+import { SearchableSimpleSelector } from './SearchableSimpleSelector';
+import { DashboardPokemonDetail } from '@/types/pokemon';
 
 interface FilterProps {
 	types: string[];
@@ -10,43 +11,38 @@ interface FilterProps {
 	searchValue: string;
 	onTypeChange: (type: string | null) => void;
 	onSearchChange: (value: string) => void;
+	pokemonList: DashboardPokemonDetail[];
 }
 
-export const Filter = ({ types, currentType, searchValue, onTypeChange, onSearchChange }: FilterProps) => {
+export const Filter = ({ types, currentType, searchValue, onTypeChange, onSearchChange, pokemonList }: FilterProps) => {
+	const handlePokemonSelect = (name: string) => {
+		onSearchChange(name);
+	};
+
+	const handleTypeSelect = (type: string) => {
+		onTypeChange(type === 'All Types' ? null : type);
+	};
+
 	return (
 		<div className='flex flex-col md:flex-row gap-4 items-center justify-between'>
-			<div className='w-full md:w-1/2 relative'>
-				<label className='input input-bordered flex items-center gap-2'>
-					<Search className='h-5 w-5 opacity-70' />
-					<input
-						type='text'
-						className='grow'
-						placeholder='Search Pokemon...'
-						value={searchValue}
-						onChange={(e) => onSearchChange(e.target.value)}
-					/>
-				</label>
+			<div className='w-full md:w-64 relative'>
+				<SearchablePokemonSelector
+					selectedId={searchValue}
+					onSelect={handlePokemonSelect}
+					pokemonList={pokemonList}
+					placeholder='Search Pokemon...'
+					className='w-full'
+				/>
 			</div>
 
-			<div className='w-full md:w-1/3 relative'>
-				<div className='relative'>
-					<div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10'>
-						<FilterIcon className='h-5 w-5 opacity-70' />
-					</div>
-					<select
-						aria-label='Filter by Type'
-						className='select select-bordered w-full pl-10 capitalize'
-						value={currentType || ''}
-						onChange={(e) => onTypeChange(e.target.value || null)}
-					>
-						<option value=''>All Types</option>
-						{types.map((type) => (
-							<option key={type} value={type}>
-								{type}
-							</option>
-						))}
-					</select>
-				</div>
+			<div className='w-full md:w-auto md:ml-auto relative'>
+				<SearchableSimpleSelector
+					options={['All Types', ...types]}
+					selectedOption={currentType || 'All Types'}
+					onSelect={handleTypeSelect}
+					placeholder='All Types'
+					className='w-full md:w-56'
+				/>
 			</div>
 		</div>
 	);

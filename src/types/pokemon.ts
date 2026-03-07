@@ -39,3 +39,21 @@ export interface PokemonState {
 	error: string | null;
 	nextUrl: string | null;
 }
+
+export interface DashboardPokemonDetail {
+	name: string;
+	types: string[];
+	stats: {
+		hp: number;
+		attack: number;
+		defense: number;
+		'special-attack': number;
+		'special-defense': number;
+		speed: number;
+	};
+	total: number;
+	isLegendary: boolean;
+	height: number;
+	weight: number;
+	image: string;
+}

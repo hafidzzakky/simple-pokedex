@@ -3,25 +3,8 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-
-// Interface matching the data structure in dashboard/page.tsx
-export interface DashboardPokemonDetail {
-	name: string;
-	types: string[];
-	stats: {
-		hp: number;
-		attack: number;
-		defense: number;
-		'special-attack': number;
-		'special-defense': number;
-		speed: number;
-	};
-	total: number;
-	isLegendary: boolean;
-	height: number;
-	weight: number;
-	image: string;
-}
+import { SearchablePokemonSelector } from './SearchablePokemonSelector';
+import { DashboardPokemonDetail } from '@/types/pokemon';
 
 interface PokemonComparisonProps {
 	pokemonList: DashboardPokemonDetail[];
@@ -65,23 +48,12 @@ export const PokemonComparison = ({ pokemonList }: PokemonComparisonProps) => {
 			<div className='flex flex-col lg:flex-row gap-4 flex-1 min-h-0'>
 				{/* Left: Pokemon 1 Selector */}
 				<div className='w-full lg:w-64 flex-shrink-0 flex flex-col gap-4 bg-base-100/20 p-4 rounded-xl border border-white/5 order-1'>
-					<div className='form-control w-full'>
-						<label className='label py-1'>
-							<span className='label-text font-bold text-primary text-xs uppercase tracking-wider'>Player 1</span>
-						</label>
-						<select
-							className='select select-bordered select-sm w-full capitalize bg-base-100/50'
-							value={selectedId1}
-							onChange={(e) => setSelectedId1(e.target.value)}
-						>
-							<option value=''>Select Pokemon...</option>
-							{sortedList.map((p) => (
-								<option key={`p1-${p.name}`} value={p.name}>
-									{p.name}
-								</option>
-							))}
-						</select>
-					</div>
+					<SearchablePokemonSelector
+						label='Player 1'
+						selectedId={selectedId1}
+						onSelect={setSelectedId1}
+						pokemonList={sortedList}
+					/>
 
 					{pokemon1 ? (
 						<Link
@@ -186,25 +158,13 @@ export const PokemonComparison = ({ pokemonList }: PokemonComparisonProps) => {
 
 				{/* Right: Pokemon 2 Selector */}
 				<div className='w-full lg:w-64 flex-shrink-0 flex flex-col gap-4 bg-base-100/20 p-4 rounded-xl border border-white/5 order-2 lg:order-3'>
-					<div className='form-control w-full'>
-						<label className='label py-1'>
-							<span className='label-text font-bold text-secondary text-xs uppercase tracking-wider text-right w-full'>
-								Player 2
-							</span>
-						</label>
-						<select
-							className='select select-bordered select-sm w-full capitalize bg-base-100/50 text-right'
-							value={selectedId2}
-							onChange={(e) => setSelectedId2(e.target.value)}
-						>
-							<option value=''>Select Pokemon...</option>
-							{sortedList.map((p) => (
-								<option key={`p2-${p.name}`} value={p.name}>
-									{p.name}
-								</option>
-							))}
-						</select>
-					</div>
+					<SearchablePokemonSelector
+						label='Player 2'
+						selectedId={selectedId2}
+						onSelect={setSelectedId2}
+						pokemonList={sortedList}
+						align='right'
+					/>
 
 					{pokemon2 ? (
 						<Link

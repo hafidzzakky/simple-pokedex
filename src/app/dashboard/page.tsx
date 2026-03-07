@@ -24,26 +24,9 @@ import {
 } from 'recharts';
 
 import { PokemonComparison } from '@/components/PokemonComparison';
+import { DashboardPokemonDetail } from '@/types/pokemon';
 
 // --- Types ---
-
-interface PokemonDetail {
-	name: string;
-	types: string[];
-	stats: {
-		hp: number;
-		attack: number;
-		defense: number;
-		'special-attack': number;
-		'special-defense': number;
-		speed: number;
-	};
-	total: number;
-	isLegendary: boolean;
-	height: number;
-	weight: number;
-	image: string;
-}
 
 interface TypeStat {
 	name: string;
@@ -92,7 +75,7 @@ const MetricCard = ({ title, value, subValue, data, dataKey, color }: any) => (
 );
 
 export default function Dashboard() {
-	const [pokemonData, setPokemonData] = useState<PokemonDetail[]>([]);
+	const [pokemonData, setPokemonData] = useState<DashboardPokemonDetail[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [progress, setProgress] = useState(0);
 	const [sortOrder, setSortOrder] = useState<'strongest' | 'weakest'>('strongest');
@@ -108,7 +91,7 @@ export default function Dashboard() {
 				const data = await response.json();
 				const results = data.results;
 
-				const details: PokemonDetail[] = [];
+				const details: DashboardPokemonDetail[] = [];
 				let completed = 0;
 
 				// Batch requests to avoid overwhelming the browser/API
@@ -327,29 +310,14 @@ export default function Dashboard() {
 								<p className='text-xs text-base-content/60'>Gen 1 Analysis (151 Pokemon)</p>
 							</div>
 						</div>
-						{/* Filters */}
-						<div className='flex flex-col md:flex-row gap-2 w-full md:w-auto'>
-							<input
-								type='text'
-								placeholder='Search Pokemon...'
-								className='input input-sm input-bordered w-full md:max-w-xs bg-base-100/50'
-								value={searchTerm}
-								onChange={(e) => setSearchTerm(e.target.value)}
-							/>
-							<select
-								className='select select-sm select-bordered w-full md:w-32 capitalize bg-base-100/50'
-								value={selectedType}
-								onChange={(e) => setSelectedType(e.target.value)}
-								disabled={loading}
-							>
-								<option>All Types</option>
-								{uniqueTypes.map((t) => (
-									<option key={t} value={t}>
-										{t}
-									</option>
-								))}
-							</select>
-						</div>
+						<DashboardControls
+							onSearch={handleSearch}
+							onTypeSelect={handleTypeSelect}
+							availableTypes={uniqueTypes}
+							selectedType={selectedType}
+							isLoading={loading}
+							pokemonList={pokemonData}
+						/>
 					</div>
 				</div>
 			</div>
