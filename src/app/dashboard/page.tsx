@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
-import { useDebounce } from '@/hooks/useDebounce';
 import { TechBackground } from '@/components/TechBackground';
+import { DashboardControls } from '@/components/DashboardControls';
 import {
 	BarChart,
 	Bar,
@@ -96,9 +96,8 @@ export default function Dashboard() {
 	const [loading, setLoading] = useState(true);
 	const [progress, setProgress] = useState(0);
 	const [sortOrder, setSortOrder] = useState<'strongest' | 'weakest'>('strongest');
-	const [selectedType, setSelectedType] = useState('All Types');
+	const [selectedType, setSelectedType] = useState('');
 	const [searchTerm, setSearchTerm] = useState('');
-	const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -173,20 +172,31 @@ export default function Dashboard() {
 		return Array.from(types).sort();
 	}, [pokemonData]);
 
+	// Filter Data
 	const filteredPokemonData = useMemo(() => {
 		let data = pokemonData;
 
-		if (selectedType !== 'All Types') {
+		if (selectedType && selectedType !== 'All Types') {
 			data = data.filter((p) => p.types.includes(selectedType));
 		}
 
-		if (debouncedSearchTerm) {
-			const lowerTerm = debouncedSearchTerm.toLowerCase();
+		if (searchTerm) {
+			const lowerTerm = searchTerm.toLowerCase();
 			data = data.filter((p) => p.name.toLowerCase().includes(lowerTerm));
 		}
 
 		return data;
-	}, [pokemonData, selectedType, debouncedSearchTerm]);
+	}, [pokemonData, selectedType, searchTerm]);
+
+	// Optimized Search Handler
+	const handleSearch = useCallback((term: string) => {
+		setSearchTerm(term);
+	}, []);
+
+	// Optimized Type Handler
+	const handleTypeSelect = useCallback((type: string) => {
+		setSelectedType(type);
+	}, []);
 
 	const typeStats = useMemo(() => {
 		const stats: Record<string, TypeStat> = {};

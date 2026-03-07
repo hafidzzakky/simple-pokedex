@@ -34,6 +34,7 @@ export const Filter = ({ types, currentType, searchValue, onTypeChange, onSearch
 						<FilterIcon className='h-5 w-5 opacity-70' />
 					</div>
 					<select
+						aria-label='Filter by Type'
 						className='select select-bordered w-full pl-10 capitalize'
 						value={currentType || ''}
 						onChange={(e) => onTypeChange(e.target.value || null)}
