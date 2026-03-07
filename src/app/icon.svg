@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Outer circle border -->
+  <circle cx="50" cy="50" r="45" fill="#f0f0f0" stroke="#333" stroke-width="5"/>
+  <!-- Top half (Red) -->
+  <path d="M 5,50 A 45,45 0 0,1 95,50" fill="#ff3333" stroke="none"/>
+  <!-- Middle line -->
+  <path d="M 5,50 L 95,50" stroke="#333" stroke-width="5"/>
+  <!-- Center button (Outer white circle) -->
+  <circle cx="50" cy="50" r="15" fill="#fff" stroke="#333" stroke-width="5"/>
+  <!-- Center button (Inner black dot) -->
+  <circle cx="50" cy="50" r="5" fill="#333" stroke="none"/>
+</svg>
