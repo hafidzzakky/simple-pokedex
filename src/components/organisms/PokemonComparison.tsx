@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { SearchablePokemonSelector } from '@/components/molecules/SearchablePokemonSelector';
 import { PokemonTypeBadge } from '@/components/atoms/PokemonTypeBadge';
@@ -19,6 +20,7 @@ export const PokemonComparison = ({ pokemonList }: PokemonComparisonProps) => {
 	useEffect(() => {
 		if (!defaultsApplied.current && pokemonList.length > 0) {
 			const sortedById = [...pokemonList].sort((a, b) => a.id - b.id);
+			// eslint-disable-next-line react-hooks/set-state-in-effect
 			if (sortedById.length > 0) setSelectedId1(sortedById[0].name);
 			if (sortedById.length > 1) setSelectedId2(sortedById[1].name);
 			defaultsApplied.current = true;
@@ -72,8 +74,8 @@ export const PokemonComparison = ({ pokemonList }: PokemonComparisonProps) => {
 							className='flex-1 flex flex-col items-center justify-center text-center space-y-4 hover:bg-white/5 rounded-xl transition-all cursor-pointer group'
 						>
 							<div className='avatar'>
-								<div className='w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 bg-base-200 shadow-lg group-hover:scale-110 transition-transform duration-300'>
-									<img src={pokemon1.image} alt={pokemon1.name} className='object-cover' />
+								<div className='w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 bg-base-200 shadow-lg group-hover:scale-110 transition-transform duration-300 relative overflow-hidden'>
+									<Image src={pokemon1.image} alt={pokemon1.name} fill className='object-cover' sizes='96px' />
 								</div>
 							</div>
 							<div>
@@ -181,8 +183,8 @@ export const PokemonComparison = ({ pokemonList }: PokemonComparisonProps) => {
 							className='flex-1 flex flex-col items-center justify-center text-center space-y-4 hover:bg-white/5 rounded-xl transition-all cursor-pointer group'
 						>
 							<div className='avatar'>
-								<div className='w-24 h-24 rounded-full ring ring-secondary ring-offset-base-100 ring-offset-2 bg-base-200 shadow-lg group-hover:scale-110 transition-transform duration-300'>
-									<img src={pokemon2.image} alt={pokemon2.name} className='object-cover' />
+								<div className='w-24 h-24 rounded-full ring ring-secondary ring-offset-base-100 ring-offset-2 bg-base-200 shadow-lg group-hover:scale-110 transition-transform duration-300 relative overflow-hidden'>
+									<Image src={pokemon2.image} alt={pokemon2.name} fill className='object-cover' sizes='96px' />
 								</div>
 							</div>
 							<div>

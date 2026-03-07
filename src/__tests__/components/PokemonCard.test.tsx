@@ -9,17 +9,20 @@ jest.mock('@/services/pokemon', () => ({
 
 // Mock Next.js Link
 jest.mock('next/link', () => {
-	return ({ children, href }: { children: React.ReactNode; href: string }) => {
+	const MockLink = ({ children, href }: { children: React.ReactNode; href: string }) => {
 		return <a href={href}>{children}</a>;
 	};
+	MockLink.displayName = 'Link';
+	return MockLink;
 });
 
 // Mock Next.js Image
 jest.mock('next/image', () => ({
 	__esModule: true,
-	default: ({ fill, ...props }: any) => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+	default: ({ fill, alt, ...props }: any) => {
 		// eslint-disable-next-line @next/next/no-img-element
-		return <img {...props} />;
+		return <img alt={alt} {...props} />;
 	},
 }));
 

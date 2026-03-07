@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useDebounce } from '@/hooks/useDebounce';
 import { SearchableSimpleSelector } from './SearchableSimpleSelector';
 import { SearchablePokemonSelector } from './SearchablePokemonSelector';
 import { DashboardPokemonDetail } from '@/types/pokemon';
@@ -28,7 +27,6 @@ export const DashboardControls = ({
 	selectedGen = '',
 }: DashboardControlsProps) => {
 	const [searchTerm, setSearchTerm] = useState('');
-	const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
 	// If we have the full pokemon list, we can use the SearchablePokemonSelector
 	// But the parent expects a string search term, not just a selected ID.

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { TechBackground } from '@/components/templates/TechBackground';
 import { DashboardControls } from '@/components/molecules/DashboardControls';
 import {
@@ -18,7 +19,6 @@ import {
 	Cell,
 	ScatterChart,
 	Scatter,
-	ZAxis,
 	LineChart,
 	Line,
 } from 'recharts';
@@ -26,7 +26,8 @@ import {
 import { PokemonComparison } from '@/components/organisms/PokemonComparison';
 import { PokemonTypeBadge } from '@/components/atoms/PokemonTypeBadge';
 import { DashboardPokemonDetail } from '@/types/pokemon';
-import { GEN_RANGES, TYPE_COLORS } from '@/utils/constants';
+import { PokeAPIPokemonResponse } from '@/types/pokeapi';
+import { GEN_RANGES } from '@/utils/constants';
 
 // --- Types ---
 
@@ -59,7 +60,44 @@ const NON_LEGENDARY_COLOR = '#cbd5e1';
 
 // --- Components ---
 
-const MetricCard = ({ title, value, subValue, data, dataKey, color }: any) => (
+interface CustomTooltipProps {
+	active?: boolean;
+	payload?: {
+		name: string;
+		value: number | string;
+		color?: string;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		payload?: any;
+	}[];
+	label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+	if (active && payload && payload.length) {
+		return (
+			<div className='bg-base-100/80 backdrop-blur-md p-3 rounded-lg shadow-lg border border-white/10'>
+				<p className='font-bold text-sm mb-1'>{label}</p>
+				{payload.map((entry, index) => (
+					<p key={index} className='text-xs' style={{ color: entry.color }}>
+						{entry.name}: {entry.value}
+					</p>
+				))}
+			</div>
+		);
+	}
+	return null;
+};
+
+interface MetricCardProps {
+	title: string;
+	value: string | number;
+	subValue: string;
+	data: { value: number }[];
+	dataKey: string;
+	color: string;
+}
+
+const MetricCard = ({ title, value, subValue, data, dataKey, color }: MetricCardProps) => (
 	<div className='bg-base-100/40 backdrop-blur-md p-4 rounded-xl shadow-lg border border-white/10 flex flex-col h-full'>
 		<h3 className='text-sm text-base-content/60 mb-1'>{title}</h3>
 		<div className='flex items-end justify-between mb-2'>
@@ -125,7 +163,7 @@ export default function Dashboard() {
 					const batch = results.slice(i, i + BATCH_SIZE);
 					const batchPromises = batch.map(async (item: { name: string; url: string }) => {
 						const res = await fetch(item.url);
-						const p = await res.json();
+						const p: PokeAPIPokemonResponse = await res.json();
 
 						// Calculate stats
 						const stats = {
@@ -146,7 +184,7 @@ export default function Dashboard() {
 						return {
 							id: p.id,
 							name: p.name,
-							types: p.types.map((t: any) => t.type.name),
+							types: p.types.map((t) => t.type.name),
 							stats,
 							total,
 							isLegendary,
@@ -375,7 +413,11 @@ export default function Dashboard() {
 			<div className='container mx-auto px-4 py-6 max-w-[1600px]'>
 				{loading ? (
 					<div className='flex flex-col justify-center items-center h-[80vh]'>
-						<div className='radial-progress text-primary mb-4' style={{ '--value': progress } as any} role='progressbar'>
+						<div
+							className='radial-progress text-primary mb-4'
+							style={{ '--value': progress } as React.CSSProperties}
+							role='progressbar'
+						>
 							{progress}%
 						</div>
 						<p className='text-base-content/60 animate-pulse'>Fetching Pokemon Data...</p>
@@ -424,10 +466,7 @@ export default function Dashboard() {
 									<BarChart layout='vertical' data={typeStats} margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
 										<XAxis type='number' hide />
 										<YAxis dataKey='name' type='category' width={80} tick={{ fontSize: 12 }} interval={0} />
-										<Tooltip
-											cursor={{ fill: 'transparent' }}
-											contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151', color: '#f3f4f6' }}
-										/>
+										<Tooltip cursor={{ fill: 'transparent' }} content={<CustomTooltip />} />
 										<Bar dataKey='count' fill='#6366f1' radius={[0, 4, 4, 0]}>
 											{typeStats.map((entry, index) => (
 												<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -461,8 +500,8 @@ export default function Dashboard() {
 									>
 										<span className='font-mono opacity-40 text-sm w-6 text-right'>#{index + 1}</span>
 										<div className='avatar'>
-											<div className='w-12 h-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 bg-base-200'>
-												<img src={p.image} alt={p.name} className='object-cover' />
+											<div className='w-12 h-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 bg-base-200 relative'>
+												<Image src={p.image} alt={p.name} fill className='object-cover rounded-full' sizes='48px' />
 											</div>
 										</div>
 										<div className='flex-1'>
@@ -695,7 +734,7 @@ export default function Dashboard() {
 											<Cell key='legendary' fill={LEGENDARY_COLOR} />
 											<Cell key='non-legendary' fill={NON_LEGENDARY_COLOR} />
 										</Pie>
-										<Tooltip contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151', color: '#f3f4f6' }} />
+										<Tooltip content={<CustomTooltip />} />
 										<Legend verticalAlign='bottom' height={36} />
 									</PieChart>
 								</ResponsiveContainer>
@@ -713,7 +752,7 @@ export default function Dashboard() {
 
 						{/* Row 6: Comparison Tool */}
 						<div className='lg:col-span-4 h-auto lg:h-[600px]'>
-							<PokemonComparison pokemonList={pokemonData as any} />
+							<PokemonComparison pokemonList={pokemonData} />
 						</div>
 					</div>
 				)}

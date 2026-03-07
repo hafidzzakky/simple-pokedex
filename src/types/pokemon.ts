@@ -40,7 +40,7 @@ export interface PokemonDetail extends Pokemon {
 export interface EvolutionNode {
 	species_name: string;
 	min_level: number;
-	trigger_name: string;
+	trigger_name: string | null;
 	item: string | null;
 	image: string;
 	evolves_to: EvolutionNode[];

@@ -111,8 +111,8 @@ const pokemonSlice = createSlice({
 				state.error = action.error.message || 'Failed to fetch pokemon detail';
 			})
 			// Evolution
-			.addCase(fetchEvolutionChainAsync.pending, (state) => {
-				// Optional: set loading for evolution chain separately if needed, 
+			.addCase(fetchEvolutionChainAsync.pending, () => {
+				// Optional: set loading for evolution chain separately if needed,
 				// but global loading is fine for now as it loads after detail
 			})
 			.addCase(fetchEvolutionChainAsync.fulfilled, (state, action) => {
@@ -124,7 +124,7 @@ const pokemonSlice = createSlice({
 			})
 			// Types
 			.addCase(fetchTypesAsync.fulfilled, (state, action) => {
-				state.types = action.payload.map((t: any) => t.name);
+				state.types = action.payload.map((t) => t.name);
 			});
 	},
 });

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { Search, X } from 'lucide-react';
 import { DashboardPokemonDetail } from '@/types/pokemon';
 
@@ -132,7 +133,9 @@ export const SearchablePokemonSelector = ({
 											onClick={() => handleSelect(p.name)}
 										>
 											<div className='flex items-center gap-2'>
-												<img src={p.image} alt={p.name} className='w-6 h-6 object-contain' loading='lazy' />
+												<div className='relative w-6 h-6'>
+													<Image src={p.image} alt={p.name} fill className='object-contain' sizes='24px' />
+												</div>
 												<span>{p.name}</span>
 											</div>
 										</button>
