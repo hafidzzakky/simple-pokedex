@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { TechBackground } from '@/components/TechBackground';
 import { DashboardControls } from '@/components/DashboardControls';
@@ -25,7 +25,7 @@ import {
 
 import { PokemonComparison } from '@/components/PokemonComparison';
 import { DashboardPokemonDetail } from '@/types/pokemon';
-import { GEN_RANGES } from '@/utils/constants';
+import { GEN_RANGES, TYPE_COLORS } from '@/utils/constants';
 
 // --- Types ---
 
@@ -84,6 +84,7 @@ export default function Dashboard() {
 	const [selectedGen, setSelectedGen] = useState('Gen 1');
 	const [searchTerm, setSearchTerm] = useState('');
 	const [fetchedGens, setFetchedGens] = useState<Set<string>>(new Set());
+	const fetchingGens = useRef(new Set<string>());
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -92,6 +93,11 @@ export default function Dashboard() {
 				return;
 			}
 
+			if (fetchingGens.current.has(selectedGen)) {
+				return;
+			}
+
+			fetchingGens.current.add(selectedGen);
 			setLoading(true);
 			try {
 				const range = GEN_RANGES[selectedGen];
@@ -155,12 +161,18 @@ export default function Dashboard() {
 					setProgress(Math.round((completed / limit) * 100));
 				}
 
-				setPokemonData((prev) => [...prev, ...details]);
+				setPokemonData((prev) => {
+					const existingIds = new Set(prev.map((p) => p.id));
+					const uniqueDetails = details.filter((d) => !existingIds.has(d.id));
+					return [...prev, ...uniqueDetails];
+				});
 				setFetchedGens((prev) => new Set(prev).add(selectedGen));
 				setLoading(false);
 			} catch (error) {
 				console.error('Error fetching dashboard data:', error);
 				setLoading(false);
+			} finally {
+				fetchingGens.current.delete(selectedGen);
 			}
 		};
 
@@ -456,7 +468,10 @@ export default function Dashboard() {
 											<div className='font-bold capitalize text-base-content'>{p.name}</div>
 											<div className='flex gap-1 mt-1'>
 												{p.types.map((t) => (
-													<span key={t} className='badge badge-xs badge-ghost opacity-70'>
+													<span
+														key={t}
+														className={`badge badge-xs text-white border-none ${TYPE_COLORS[t] || 'bg-gray-400'}`}
+													>
 														{t}
 													</span>
 												))}
