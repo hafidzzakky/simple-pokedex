@@ -10,6 +10,7 @@ import { Ruler, Weight, Zap, X, Activity, Target, Crosshair, ChevronLeft, Chevro
 import { TYPE_COLORS } from '@/utils/constants';
 import { PokemonTypeBadge } from '@/components/atoms/PokemonTypeBadge';
 import { PokemonStats } from '@/components/molecules/PokemonStats';
+import { PokeballLoader } from '@/components/atoms/PokeballLoader';
 
 interface PokemonDetailProps {
 	pokemon: PokemonDetailType;
@@ -105,7 +106,7 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 
 							{isLoadingMove ? (
 								<div className='p-12 flex flex-col items-center justify-center gap-4'>
-									<div className='loading loading-spinner loading-lg text-primary'></div>
+									<PokeballLoader showText={false} />
 									<p className='text-base-content/60 font-medium animate-pulse'>Loading Move Details...</p>
 								</div>
 							) : error ? (
