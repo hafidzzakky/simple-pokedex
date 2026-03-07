@@ -8,6 +8,7 @@ interface SearchableSimpleSelectorProps {
 	placeholder?: string;
 	disabled?: boolean;
 	className?: string;
+	allOptionLabel?: string; // Optional label for "All..." option
 }
 
 export const SearchableSimpleSelector = ({
@@ -17,6 +18,7 @@ export const SearchableSimpleSelector = ({
 	placeholder = 'Select...',
 	disabled = false,
 	className,
+	allOptionLabel,
 }: SearchableSimpleSelectorProps) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [searchTerm, setSearchTerm] = useState('');
@@ -72,15 +74,17 @@ export const SearchableSimpleSelector = ({
 						</div>
 					</div>
 					<ul className='menu menu-compact w-full p-0'>
-						<li>
-							<button
-								type='button'
-								className={`capitalize rounded-md py-2 ${selectedOption === '' ? 'active' : ''}`}
-								onClick={() => handleSelect('')}
-							>
-								All Types
-							</button>
-						</li>
+						{allOptionLabel && (
+							<li>
+								<button
+									type='button'
+									className={`capitalize rounded-md py-2 ${selectedOption === '' ? 'active' : ''}`}
+									onClick={() => handleSelect('')}
+								>
+									{allOptionLabel}
+								</button>
+							</li>
+						)}
 						{filteredOptions.length > 0 ? (
 							filteredOptions.map((opt) => (
 								<li key={opt}>

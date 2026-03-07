@@ -80,13 +80,14 @@ export default function Dashboard() {
 	const [progress, setProgress] = useState(0);
 	const [sortOrder, setSortOrder] = useState<'strongest' | 'weakest'>('strongest');
 	const [selectedType, setSelectedType] = useState('');
+	const [selectedGen, setSelectedGen] = useState('Gen 1');
 	const [searchTerm, setSearchTerm] = useState('');
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				// Fetch Gen 1 (151) + Gen 2 (100) = 251 Pokemon for a good dataset
-				const LIMIT = 151;
+				// Fetch up to Gen 9 (1025 Pokemon) for comprehensive analysis
+				const LIMIT = 1025;
 				const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${LIMIT}`);
 				const data = await response.json();
 				const results = data.results;
@@ -95,7 +96,8 @@ export default function Dashboard() {
 				let completed = 0;
 
 				// Batch requests to avoid overwhelming the browser/API
-				const BATCH_SIZE = 10;
+				// Increased batch size for faster loading
+				const BATCH_SIZE = 20;
 				for (let i = 0; i < results.length; i += BATCH_SIZE) {
 					const batch = results.slice(i, i + BATCH_SIZE);
 					const batchPromises = batch.map(async (item: { name: string; url: string }) => {
@@ -119,6 +121,7 @@ export default function Dashboard() {
 						const isLegendary = total >= 580;
 
 						return {
+							id: p.id,
 							name: p.name,
 							types: p.types.map((t: any) => t.type.name),
 							stats,
@@ -163,13 +166,32 @@ export default function Dashboard() {
 			data = data.filter((p) => p.types.includes(selectedType));
 		}
 
+		if (selectedGen !== 'All Generations') {
+			const genRanges: Record<string, [number, number]> = {
+				'Gen 1': [1, 151],
+				'Gen 2': [152, 251],
+				'Gen 3': [252, 386],
+				'Gen 4': [387, 493],
+				'Gen 5': [494, 649],
+				'Gen 6': [650, 721],
+				'Gen 7': [722, 809],
+				'Gen 8': [810, 905],
+				'Gen 9': [906, 1025],
+			};
+
+			const range = genRanges[selectedGen];
+			if (range) {
+				data = data.filter((p) => p.id >= range[0] && p.id <= range[1]);
+			}
+		}
+
 		if (searchTerm) {
 			const lowerTerm = searchTerm.toLowerCase();
 			data = data.filter((p) => p.name.toLowerCase().includes(lowerTerm));
 		}
 
 		return data;
-	}, [pokemonData, selectedType, searchTerm]);
+	}, [pokemonData, selectedType, selectedGen, searchTerm]);
 
 	// Optimized Search Handler
 	const handleSearch = useCallback((term: string) => {
@@ -179,6 +201,10 @@ export default function Dashboard() {
 	// Optimized Type Handler
 	const handleTypeSelect = useCallback((type: string) => {
 		setSelectedType(type);
+	}, []);
+
+	const handleGenSelect = useCallback((gen: string) => {
+		setSelectedGen(gen);
 	}, []);
 
 	const typeStats = useMemo(() => {
@@ -307,7 +333,10 @@ export default function Dashboard() {
 							</Link>
 							<div>
 								<h1 className='text-2xl font-bold text-base-content'>Pokemon Analysis Dashboard</h1>
-								<p className='text-xs text-base-content/60'>Gen 1 Analysis (151 Pokemon)</p>
+								<p className='text-xs text-base-content/60'>
+									{selectedGen === 'All Generations' ? 'All Generations' : selectedGen} Analysis ({filteredPokemonData.length}{' '}
+									Pokemon)
+								</p>
 							</div>
 						</div>
 						<DashboardControls
@@ -315,6 +344,19 @@ export default function Dashboard() {
 							onTypeSelect={handleTypeSelect}
 							availableTypes={uniqueTypes}
 							selectedType={selectedType}
+							onGenSelect={handleGenSelect}
+							availableGens={[
+								'Gen 1',
+								'Gen 2',
+								'Gen 3',
+								'Gen 4',
+								'Gen 5',
+								'Gen 6',
+								'Gen 7',
+								'Gen 8',
+								'Gen 9',
+							]}
+							selectedGen={selectedGen}
 							isLoading={loading}
 							pokemonList={pokemonData}
 						/>

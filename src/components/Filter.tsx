@@ -37,11 +37,12 @@ export const Filter = ({ types, currentType, searchValue, onTypeChange, onSearch
 
 			<div className='w-full md:w-auto md:ml-auto relative'>
 				<SearchableSimpleSelector
-					options={['All Types', ...types]}
-					selectedOption={currentType || 'All Types'}
+					options={types}
+					selectedOption={currentType || ''}
 					onSelect={handleTypeSelect}
 					placeholder='All Types'
 					className='w-full md:w-56'
+					allOptionLabel='All Types'
 				/>
 			</div>
 		</div>

@@ -41,6 +41,7 @@ export interface PokemonState {
 }
 
 export interface DashboardPokemonDetail {
+	id: number;
 	name: string;
 	types: string[];
 	stats: {

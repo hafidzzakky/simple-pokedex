@@ -11,6 +11,9 @@ interface DashboardControlsProps {
 	selectedType: string;
 	isLoading: boolean;
 	pokemonList?: DashboardPokemonDetail[]; // Optional for autocomplete
+	onGenSelect?: (gen: string) => void;
+	availableGens?: string[];
+	selectedGen?: string;
 }
 
 export const DashboardControls = ({
@@ -20,6 +23,9 @@ export const DashboardControls = ({
 	selectedType,
 	isLoading,
 	pokemonList = [],
+	onGenSelect,
+	availableGens = [],
+	selectedGen = '',
 }: DashboardControlsProps) => {
 	const [searchTerm, setSearchTerm] = useState('');
 	const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -96,7 +102,23 @@ export const DashboardControls = ({
 				onSelect={onTypeSelect}
 				placeholder='All Types'
 				disabled={isLoading}
+				allOptionLabel='All Types'
 			/>
+
+			{onGenSelect && availableGens.length > 0 && (
+				<>
+					<label className='sr-only' htmlFor='gen-filter'>
+						Filter by Generation
+					</label>
+					<SearchableSimpleSelector
+						options={availableGens}
+						selectedOption={selectedGen}
+						onSelect={onGenSelect}
+						placeholder='All Generations'
+						disabled={isLoading}
+					/>
+				</>
+			)}
 		</div>
 	);
 };
