@@ -9,11 +9,13 @@ import { Filter } from '@/components/Filter';
 import { TechBackground } from '@/components/TechBackground';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DashboardPokemonDetail } from '@/types/pokemon';
+import { GEN_RANGES } from '@/utils/constants';
 
 export default function Home() {
 	const dispatch = useAppDispatch();
 	const { list, types, loading, error, filter } = useAppSelector((state) => state.pokemon);
 	const [displayLimit, setDisplayLimit] = useState(20);
+	const [selectedGen, setSelectedGen] = useState<string>('');
 
 	const hasFetched = useRef(false);
 
@@ -43,6 +45,11 @@ export default function Home() {
 		setDisplayLimit(20);
 	};
 
+	const handleGenChange = (gen: string) => {
+		setSelectedGen(gen);
+		setDisplayLimit(20);
+	};
+
 	const [isLoadingMore, setIsLoadingMore] = useState(false);
 
 	const pokemonList = useMemo<DashboardPokemonDetail[]>(() => {
@@ -65,8 +72,24 @@ export default function Home() {
 	}, [list]);
 
 	const filteredList = useMemo(() => {
-		return list.filter((pokemon) => pokemon.name.toLowerCase().includes(filter.search.toLowerCase()));
-	}, [list, filter.search]);
+		return list.filter((pokemon) => {
+			const matchesSearch = pokemon.name.toLowerCase().includes(filter.search.toLowerCase());
+
+			if (!matchesSearch) return false;
+
+			if (selectedGen && selectedGen !== 'All Generations') {
+				const range = GEN_RANGES[selectedGen];
+				if (range) {
+					// Extract ID from URL
+					const parts = pokemon.url.split('/');
+					const id = parseInt(parts[parts.length - 2]);
+					if (id < range[0] || id > range[1]) return false;
+				}
+			}
+
+			return true;
+		});
+	}, [list, filter.search, selectedGen]);
 
 	const displayedList = useMemo(() => {
 		return filteredList.slice(0, displayLimit);
@@ -160,8 +183,10 @@ export default function Home() {
 						types={types}
 						currentType={filter.type}
 						searchValue={filter.search}
+						selectedGen={selectedGen}
 						onTypeChange={handleTypeChange}
 						onSearchChange={handleSearchChange}
+						onGenChange={handleGenChange}
 						pokemonList={pokemonList}
 					/>
 				</div>

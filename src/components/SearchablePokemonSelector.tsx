@@ -126,7 +126,9 @@ export const SearchablePokemonSelector = ({
 									<li key={p.name}>
 										<button
 											type='button'
-											className={`capitalize rounded-md py-2 ${selectedId === p.name ? 'active' : ''}`}
+											className={`capitalize rounded-md py-2 ${
+												selectedId === p.name ? 'bg-primary text-primary-content font-bold active' : ''
+											}`}
 											onClick={() => handleSelect(p.name)}
 										>
 											<div className='flex items-center gap-2'>

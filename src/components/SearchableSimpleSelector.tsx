@@ -78,7 +78,9 @@ export const SearchableSimpleSelector = ({
 							<li>
 								<button
 									type='button'
-									className={`capitalize rounded-md py-2 ${selectedOption === '' ? 'active' : ''}`}
+									className={`capitalize rounded-md py-2 ${
+										selectedOption === '' ? 'bg-primary text-primary-content font-bold active' : ''
+									}`}
 									onClick={() => handleSelect('')}
 								>
 									{allOptionLabel}
@@ -90,7 +92,9 @@ export const SearchableSimpleSelector = ({
 								<li key={opt}>
 									<button
 										type='button'
-										className={`capitalize rounded-md py-2 ${selectedOption === opt ? 'active' : ''}`}
+										className={`capitalize rounded-md py-2 ${
+											selectedOption === opt ? 'bg-primary text-primary-content font-bold active' : ''
+										}`}
 										onClick={() => handleSelect(opt)}
 									>
 										{opt}
