@@ -14,7 +14,22 @@ export interface Pokemon {
 	}[];
 	height: number;
 	weight: number;
-	abilities: string[];
+	abilities: Ability[];
+	moves: Move[];
+}
+
+export interface Ability {
+	name: string;
+	isHidden: boolean;
+	description?: string;
+	shortDescription?: string;
+	generation?: string;
+}
+
+export interface Move {
+	name: string;
+	level?: number;
+	method: string;
 }
 
 export interface PokemonDetail extends Pokemon {

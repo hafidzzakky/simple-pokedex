@@ -25,7 +25,12 @@ export default function PokemonDetailPage({ params }: PageProps) {
 	const dispatch = useAppDispatch();
 	const { pokemonDetails, evolutionChains, loading, error } = useAppSelector((state) => state.pokemon);
 
-	const pokemon = pokemonDetails[name.toLowerCase()];
+	// Support both name and ID lookup
+	const isId = !isNaN(Number(name));
+	const pokemon = isId
+		? Object.values(pokemonDetails).find((p) => p.id === Number(name))
+		: pokemonDetails[name.toLowerCase()];
+
 	const evolutionChain = pokemon?.evolutionChainUrl ? evolutionChains[pokemon.evolutionChainUrl] : null;
 
 	useEffect(() => {

@@ -45,6 +45,47 @@ export const getPokemonDetail = async (name: string): Promise<PokemonDetail> => 
 		.filter(([_, mult]) => mult >= 2)
 		.map(([type]) => type);
 
+	// Fetch Ability Details
+	const abilities = await Promise.all(
+		data.abilities.map(async (a: any) => {
+			let description = '';
+			let shortDescription = '';
+			let generation = '';
+			try {
+				const abRes = await axios.get(a.ability.url);
+				const entry = abRes.data.effect_entries.find((e: any) => e.language.name === 'en');
+				description = entry ? entry.effect : 'No description available.';
+				shortDescription = entry ? entry.short_effect : 'No short description available.';
+				generation = abRes.data.generation.name;
+			} catch (e) {
+				console.error('Failed to fetch ability description', e);
+			}
+			return {
+				name: a.ability.name,
+				isHidden: a.is_hidden,
+				description,
+				shortDescription,
+				generation,
+			};
+		}),
+	);
+
+	// Process Moves (Level-up only)
+	const moves = data.moves
+		.map((m: any) => {
+			const levelUpDetail = m.version_group_details.find((d: any) => d.move_learn_method.name === 'level-up');
+			if (levelUpDetail) {
+				return {
+					name: m.move.name,
+					level: levelUpDetail.level_learned_at,
+					method: 'level-up',
+				};
+			}
+			return null;
+		})
+		.filter((m: any) => m !== null)
+		.sort((a: any, b: any) => a.level - b.level);
+
 	return {
 		id: data.id,
 		name: data.name,
@@ -56,7 +97,8 @@ export const getPokemonDetail = async (name: string): Promise<PokemonDetail> => 
 		})),
 		height: data.height,
 		weight: data.weight,
-		abilities: data.abilities.map((a: any) => a.ability.name),
+		abilities,
+		moves,
 		evolutionChainUrl: speciesResponse.data.evolution_chain.url,
 		weaknesses,
 	};

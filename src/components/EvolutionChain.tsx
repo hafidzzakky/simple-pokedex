@@ -20,20 +20,21 @@ export const EvolutionChain = ({ chain }: EvolutionChainProps) => {
 			<div key={node.species_name} className='flex flex-col md:flex-row items-center gap-4'>
 				<Link href={`/pokemon/${node.species_name}`}>
 					<motion.div
-						whileHover={{ scale: 1.1 }}
+						whileHover={{ y: -5 }}
 						whileTap={{ scale: 0.95 }}
-						className='flex flex-col items-center group cursor-pointer'
+						className='flex flex-col items-center group cursor-pointer relative'
 					>
-						<div className='relative w-32 h-32 md:w-40 md:h-40 bg-base-200 rounded-full border-4 border-base-100 shadow-md overflow-hidden transition-colors group-hover:border-primary/50 group-hover:bg-primary/10'>
+						<div className='relative w-32 h-32 md:w-40 md:h-40 bg-base-200 rounded-full border-4 border-base-100 shadow-md overflow-hidden transition-all duration-300 group-hover:border-primary group-hover:shadow-primary/30 group-hover:shadow-lg z-10'>
 							<Image
 								src={imageUrl}
 								alt={node.species_name}
 								fill
-								className='object-contain p-4 transition-transform duration-300 group-hover:scale-110'
+								className='object-contain p-4 transition-transform duration-500 group-hover:scale-110'
 								sizes='(max-width: 768px) 100px, 160px'
 							/>
 						</div>
-						<span className='mt-3 text-lg font-bold capitalize text-base-content group-hover:text-primary transition-colors'>
+						<div className='absolute inset-0 bg-primary/5 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 scale-125' />
+						<span className='mt-4 text-lg font-bold capitalize text-base-content/80 group-hover:text-primary transition-colors duration-300'>
 							{node.species_name}
 						</span>
 					</motion.div>
@@ -66,13 +67,13 @@ export const EvolutionChain = ({ chain }: EvolutionChainProps) => {
 			transition={{ duration: 0.6 }}
 			className='card bg-base-100 rounded-3xl p-6 md:p-10 shadow-xl border border-base-200 mt-12'
 		>
-			<h3 className='text-2xl font-bold mb-8 text-center text-base-content flex items-center justify-center gap-2'>
+			<h3 className='text-2xl font-bold mb-12 text-center text-base-content flex items-center justify-center gap-2'>
 				<span className='bg-primary text-primary-content w-8 h-8 rounded-lg flex items-center justify-center text-sm shadow-md'>
 					E
 				</span>
 				Evolution Chain
 			</h3>
-			<div className='flex flex-col items-center justify-center overflow-x-auto pb-4'>{renderChain(chain)}</div>
+			<div className='flex flex-col items-center justify-center overflow-x-auto pb-4 pt-6 overflow-hidden'>{renderChain(chain)}</div>
 		</motion.div>
 	);
 };
