@@ -55,6 +55,18 @@ const COLORS = [
 const LEGENDARY_COLOR = '#8b5cf6';
 const NON_LEGENDARY_COLOR = '#cbd5e1';
 
+const GEN_RANGES: Record<string, [number, number]> = {
+	'Gen 1': [1, 151],
+	'Gen 2': [152, 251],
+	'Gen 3': [252, 386],
+	'Gen 4': [387, 493],
+	'Gen 5': [494, 649],
+	'Gen 6': [650, 721],
+	'Gen 7': [722, 809],
+	'Gen 8': [810, 905],
+	'Gen 9': [906, 1025],
+};
+
 // --- Components ---
 
 const MetricCard = ({ title, value, subValue, data, dataKey, color }: any) => (
@@ -82,13 +94,28 @@ export default function Dashboard() {
 	const [selectedType, setSelectedType] = useState('');
 	const [selectedGen, setSelectedGen] = useState('Gen 1');
 	const [searchTerm, setSearchTerm] = useState('');
+	const [fetchedGens, setFetchedGens] = useState<Set<string>>(new Set());
 
 	useEffect(() => {
 		const fetchData = async () => {
+			if (fetchedGens.has(selectedGen)) {
+				setLoading(false);
+				return;
+			}
+
+			setLoading(true);
 			try {
-				// Fetch up to Gen 9 (1025 Pokemon) for comprehensive analysis
-				const LIMIT = 1025;
-				const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${LIMIT}`);
+				const range = GEN_RANGES[selectedGen];
+				if (!range) {
+					setLoading(false);
+					return;
+				}
+
+				const [startId, endId] = range;
+				const limit = endId - startId + 1;
+				const offset = startId - 1;
+
+				const response = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`);
 				const data = await response.json();
 				const results = data.results;
 
@@ -136,10 +163,11 @@ export default function Dashboard() {
 					const batchResults = await Promise.all(batchPromises);
 					details.push(...batchResults);
 					completed += batchResults.length;
-					setProgress(Math.round((completed / LIMIT) * 100));
+					setProgress(Math.round((completed / limit) * 100));
 				}
 
-				setPokemonData(details);
+				setPokemonData((prev) => [...prev, ...details]);
+				setFetchedGens((prev) => new Set(prev).add(selectedGen));
 				setLoading(false);
 			} catch (error) {
 				console.error('Error fetching dashboard data:', error);
@@ -148,7 +176,7 @@ export default function Dashboard() {
 		};
 
 		fetchData();
-	}, []);
+	}, [selectedGen, fetchedGens]);
 
 	// --- Process Data for Visualizations ---
 
@@ -167,19 +195,7 @@ export default function Dashboard() {
 		}
 
 		if (selectedGen !== 'All Generations') {
-			const genRanges: Record<string, [number, number]> = {
-				'Gen 1': [1, 151],
-				'Gen 2': [152, 251],
-				'Gen 3': [252, 386],
-				'Gen 4': [387, 493],
-				'Gen 5': [494, 649],
-				'Gen 6': [650, 721],
-				'Gen 7': [722, 809],
-				'Gen 8': [810, 905],
-				'Gen 9': [906, 1025],
-			};
-
-			const range = genRanges[selectedGen];
+			const range = GEN_RANGES[selectedGen];
 			if (range) {
 				data = data.filter((p) => p.id >= range[0] && p.id <= range[1]);
 			}
@@ -334,8 +350,8 @@ export default function Dashboard() {
 							<div>
 								<h1 className='text-2xl font-bold text-base-content'>Pokemon Analysis Dashboard</h1>
 								<p className='text-xs text-base-content/60'>
-									{selectedGen === 'All Generations' ? 'All Generations' : selectedGen} Analysis ({filteredPokemonData.length}{' '}
-									Pokemon)
+									{selectedGen === 'All Generations' ? 'All Generations' : selectedGen} Analysis (
+									{filteredPokemonData.length} Pokemon)
 								</p>
 							</div>
 						</div>
@@ -345,17 +361,7 @@ export default function Dashboard() {
 							availableTypes={uniqueTypes}
 							selectedType={selectedType}
 							onGenSelect={handleGenSelect}
-							availableGens={[
-								'Gen 1',
-								'Gen 2',
-								'Gen 3',
-								'Gen 4',
-								'Gen 5',
-								'Gen 6',
-								'Gen 7',
-								'Gen 8',
-								'Gen 9',
-							]}
+							availableGens={['Gen 1', 'Gen 2', 'Gen 3', 'Gen 4', 'Gen 5', 'Gen 6', 'Gen 7', 'Gen 8', 'Gen 9']}
 							selectedGen={selectedGen}
 							isLoading={loading}
 							pokemonList={pokemonData}
