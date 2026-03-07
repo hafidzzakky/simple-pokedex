@@ -53,6 +53,10 @@ export interface PokeAPIPokemonResponse {
 			url: string;
 		};
 	}[];
+	cries: {
+		latest: string;
+		legacy: string;
+	};
 	height: number;
 	weight: number;
 }

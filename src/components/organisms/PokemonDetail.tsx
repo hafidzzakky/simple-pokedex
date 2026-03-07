@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
 import { PokemonDetail as PokemonDetailType } from '@/types/pokemon';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { Ruler, Weight, Zap, X, Activity, Target, Crosshair, ChevronLeft, ChevronRight, Shield, BarChart3 } from 'lucide-react';
+import { Ruler, Weight, Zap, X, Activity, Target, Crosshair, ChevronLeft, ChevronRight, Shield, BarChart3, Volume2 } from 'lucide-react';
 import { TYPE_COLORS } from '@/utils/constants';
 import { PokemonTypeBadge } from '@/components/atoms/PokemonTypeBadge';
 import { PokemonStats } from '@/components/molecules/PokemonStats';
@@ -39,6 +39,18 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 	const [isLoadingMove, setIsLoadingMove] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+
+	const audioRef = useRef<HTMLAudioElement | null>(null);
+	const [isPlaying, setIsPlaying] = useState(false);
+
+	const playCry = () => {
+		if (audioRef.current) {
+			audioRef.current.volume = 0.5;
+			audioRef.current.play();
+			setIsPlaying(true);
+			audioRef.current.onended = () => setIsPlaying(false);
+		}
+	};
 
 	const handleMoveClick = async (moveName: string) => {
 		setError(null);
@@ -295,7 +307,23 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 							transition={{ delay: 0.3, duration: 0.5 }}
 						>
 							<div className='flex flex-col-reverse md:flex-row md:justify-between items-center md:items-end mb-6 gap-4 text-center md:text-left'>
-								<h1 className='text-5xl font-black capitalize text-base-content tracking-tight'>{pokemon.name}</h1>
+								<div className='flex items-center gap-3'>
+									<h1 className='text-5xl font-black capitalize text-base-content tracking-tight'>{pokemon.name}</h1>
+									{pokemon.cries?.latest && (
+										<>
+											<button
+												onClick={playCry}
+												className={`btn btn-circle btn-ghost ${
+													isPlaying ? 'text-primary animate-pulse' : 'text-base-content/50 hover:text-primary'
+												}`}
+												title='Play Cry'
+											>
+												<Volume2 size={32} />
+											</button>
+											<audio ref={audioRef} src={pokemon.cries.latest} className='hidden' />
+										</>
+									)}
+								</div>
 								<div className='flex items-center gap-4 md:self-auto'>
 									{pokemon.id > 1 && (
 										<Link

@@ -110,6 +110,7 @@ export const getPokemonDetail = async (name: string): Promise<PokemonDetail> => 
 			name: s.stat.name,
 			value: s.base_stat,
 		})),
+		cries: data.cries,
 		height: data.height,
 		weight: data.weight,
 		abilities,

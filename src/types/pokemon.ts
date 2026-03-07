@@ -12,6 +12,10 @@ export interface Pokemon {
 		name: string;
 		value: number;
 	}[];
+	cries: {
+		latest: string;
+		legacy: string;
+	};
 	height: number;
 	weight: number;
 	abilities: Ability[];
