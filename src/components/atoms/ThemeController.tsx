@@ -38,7 +38,7 @@ export const ThemeController = () => {
 	if (!mounted) return null;
 
 	return (
-		<div className='dropdown dropdown-end fixed top-4 right-4 z-50'>
+		<div className='dropdown dropdown-end fixed top-4 right-4 z-50 hidden'>
 			<div
 				tabIndex={0}
 				role='button'

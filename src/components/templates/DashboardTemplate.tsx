@@ -19,6 +19,7 @@ import {
 import { ChevronLeft } from 'lucide-react';
 
 import { TechBackground } from '@/components/atoms/TechBackground';
+import { PokeballLoader } from '@/components/atoms/PokeballLoader';
 import { DashboardControls } from '@/components/molecules/DashboardControls';
 import { PokemonComparison } from '@/components/organisms/PokemonComparison';
 import { PokemonTypeBadge } from '@/components/atoms/PokemonTypeBadge';
@@ -145,14 +146,8 @@ export const DashboardTemplate = ({
 			<div className='container mx-auto px-4 py-6 max-w-[1600px]'>
 				{loading ? (
 					<div className='flex flex-col justify-center items-center h-[80vh]'>
-						<div
-							className='radial-progress text-primary mb-4'
-							style={{ '--value': progress } as React.CSSProperties}
-							role='progressbar'
-						>
-							{progress}%
-						</div>
-						<p className='text-base-content/60 animate-pulse'>Fetching Pokemon Data...</p>
+						<PokeballLoader showText={false} />
+						<p className='text-base-content/60 animate-pulse mt-4'>Fetching Pokemon Data... {progress}%</p>
 					</div>
 				) : (
 					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>

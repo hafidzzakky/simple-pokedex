@@ -6,9 +6,10 @@ import axios from 'axios';
 import { PokemonDetail as PokemonDetailType } from '@/types/pokemon';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { Ruler, Weight, Zap, Shield, BarChart3, X, Activity, Target, Crosshair, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Ruler, Weight, Zap, X, Activity, Target, Crosshair, ChevronLeft, ChevronRight, Shield, BarChart3 } from 'lucide-react';
 import { TYPE_COLORS } from '@/utils/constants';
 import { PokemonTypeBadge } from '@/components/atoms/PokemonTypeBadge';
+import { PokemonStats } from '@/components/molecules/PokemonStats';
 
 interface PokemonDetailProps {
 	pokemon: PokemonDetailType;
@@ -236,7 +237,7 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 								initial={{ opacity: 0, y: 20 }}
 								animate={{ opacity: 1, y: 0 }}
 								transition={{ delay: 0.4 }}
-								className='bg-base-100/40 p-5 rounded-2xl border border-base-200/50'
+								className='bg-base-100/40 p-5 rounded-2xl border border-base-200/50 hidden md:block'
 							>
 								<h3 className='text-sm font-bold mb-3 text-base-content flex items-center gap-2 uppercase tracking-wider opacity-70'>
 									<Shield size={16} /> Weaknesses
@@ -258,7 +259,7 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.5 }}
-							className='bg-base-100/40 p-5 rounded-2xl border border-base-200/50'
+							className='bg-base-100/40 p-5 rounded-2xl border border-base-200/50 hidden md:block'
 						>
 							<h3 className='text-sm font-bold mb-3 text-base-content flex items-center gap-2 uppercase tracking-wider opacity-70'>
 								<BarChart3 size={16} /> Base Stats
@@ -292,9 +293,9 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 							animate={{ x: 0, opacity: 1 }}
 							transition={{ delay: 0.3, duration: 0.5 }}
 						>
-							<div className='flex flex-col-reverse md:flex-row md:justify-between md:items-end mb-6 gap-4'>
+							<div className='flex flex-col-reverse md:flex-row md:justify-between items-center md:items-end mb-6 gap-4 text-center md:text-left'>
 								<h1 className='text-5xl font-black capitalize text-base-content tracking-tight'>{pokemon.name}</h1>
-								<div className='flex items-center gap-4 self-end md:self-auto'>
+								<div className='flex items-center gap-4 md:self-auto'>
 									{pokemon.id > 1 && (
 										<Link
 											href={`/pokemon/${pokemon.id - 1}`}
@@ -319,7 +320,7 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 								</div>
 							</div>
 
-							<div className='flex gap-3 mb-8'>
+							<div className='flex gap-3 mb-8 justify-center md:justify-start'>
 								{pokemon.types.map((type) => (
 									<PokemonTypeBadge
 										key={type}
@@ -330,7 +331,7 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 							</div>
 
 							<div className='grid grid-cols-2 gap-6 mb-8'>
-								<div className='flex items-center gap-4 p-4 bg-base-100/50 rounded-2xl border border-base-200 shadow-sm'>
+								<div className='flex flex-col md:flex-row items-center md:items-start justify-center gap-2 md:gap-4 p-4 bg-base-100/50 rounded-2xl border border-base-200 shadow-sm text-center md:text-left'>
 									<div className='p-3 bg-blue-100 rounded-full text-blue-600'>
 										<Ruler size={24} />
 									</div>
@@ -339,7 +340,7 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 										<span className='text-xl font-bold text-base-content'>{pokemon.height / 10} m</span>
 									</div>
 								</div>
-								<div className='flex items-center gap-4 p-4 bg-base-100/50 rounded-2xl border border-base-200 shadow-sm'>
+								<div className='flex flex-col md:flex-row items-center md:items-start justify-center gap-2 md:gap-4 p-4 bg-base-100/50 rounded-2xl border border-base-200 shadow-sm text-center md:text-left'>
 									<div className='p-3 bg-green-100 rounded-full text-green-600'>
 										<Weight size={24} />
 									</div>
@@ -379,6 +380,11 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 										</div>
 									))}
 								</div>
+							</div>
+
+							{/* Mobile Stats (Visible only on Mobile, below Abilities) */}
+							<div className='block md:hidden mt-6'>
+								<PokemonStats pokemon={pokemon} themeColor={themeColor} />
 							</div>
 						</motion.div>
 					</div>

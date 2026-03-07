@@ -7,6 +7,7 @@ import { fetchPokemonDetailAsync, fetchEvolutionChainAsync } from '@/store/slice
 import { PokemonDetail } from '@/components/organisms/PokemonDetail';
 import { EvolutionChain } from '@/components/organisms/EvolutionChain';
 import { TechBackground } from '@/components/atoms/TechBackground';
+import { PokeballLoader } from '@/components/atoms/PokeballLoader';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
@@ -46,23 +47,7 @@ export default function PokemonDetailPage({ params }: PageProps) {
 	if (loading && !pokemon) {
 		return (
 			<div className='flex justify-center items-center min-h-screen bg-gradient-to-br from-base-100 to-base-300'>
-				<motion.div
-					animate={{
-						scale: [1, 1.2, 1],
-						rotate: [0, 180, 360],
-					}}
-					transition={{
-						duration: 2,
-						repeat: Infinity,
-						ease: 'easeInOut',
-					}}
-					className='relative w-24 h-24'
-				>
-					<div className='absolute inset-0 border-8 border-primary rounded-full border-t-transparent animate-spin'></div>
-					<div className='absolute inset-4 bg-base-100 rounded-full flex items-center justify-center shadow-inner'>
-						<div className='w-8 h-8 bg-primary rounded-full border-4 border-base-100 shadow-lg'></div>
-					</div>
-				</motion.div>
+				<PokeballLoader />
 			</div>
 		);
 	}

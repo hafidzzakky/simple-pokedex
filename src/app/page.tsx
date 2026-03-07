@@ -7,9 +7,11 @@ import { fetchAllPokemonAsync, fetchTypesAsync, fetchPokemonByTypeAsync, setFilt
 import { PokemonCard } from '@/components/organisms/PokemonCard';
 import { Filter } from '@/components/molecules/Filter';
 import { TechBackground } from '@/components/atoms/TechBackground';
+import { PokeballLoader } from '@/components/atoms/PokeballLoader';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DashboardPokemonDetail } from '@/types/pokemon';
 import { GEN_RANGES } from '@/utils/constants';
+import { Users } from 'lucide-react';
 
 export default function Home() {
 	const dispatch = useAppDispatch();
@@ -160,23 +162,29 @@ export default function Home() {
 							<h1 className='text-3xl font-extrabold text-base-content tracking-tight'>Pokédex</h1>
 							<p className='text-sm text-base-content/60'>Search for any Pokémon that exists on the planet</p>
 						</div>
-						<Link href='/dashboard' className='btn btn-primary btn-sm gap-2'>
-							<svg
-								xmlns='http://www.w3.org/2000/svg'
-								className='h-5 w-5'
-								fill='none'
-								viewBox='0 0 24 24'
-								stroke='currentColor'
-							>
-								<path
-									strokeLinecap='round'
-									strokeLinejoin='round'
-									strokeWidth={2}
-									d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'
-								/>
-							</svg>
-							Dashboard
-						</Link>
+						<div className='flex gap-2'>
+							<Link href='/team' className='btn btn-secondary btn-sm gap-2'>
+								<Users size={18} />
+								Team Builder
+							</Link>
+							<Link href='/dashboard' className='btn btn-primary btn-sm gap-2'>
+								<svg
+									xmlns='http://www.w3.org/2000/svg'
+									className='h-5 w-5'
+									fill='none'
+									viewBox='0 0 24 24'
+									stroke='currentColor'
+								>
+									<path
+										strokeLinecap='round'
+										strokeLinejoin='round'
+										strokeWidth={2}
+										d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'
+									/>
+								</svg>
+								Dashboard
+							</Link>
+						</div>
 					</div>
 
 					<Filter
@@ -195,7 +203,7 @@ export default function Home() {
 			<div className='container mx-auto px-4 py-8 max-w-[1600px]'>
 				{loading && list.length === 0 ? (
 					<div className='flex justify-center items-center h-64'>
-						<div className='animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-red-600' />
+						<PokeballLoader size='lg' />
 					</div>
 				) : (
 					<>
@@ -225,7 +233,7 @@ export default function Home() {
 
 						{displayedList.length < filteredList.length && (
 							<div ref={lastElementRef} className='flex justify-center items-center mt-12 py-8'>
-								<div className='animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-red-600' />
+								<PokeballLoader size='sm' showText={false} />
 							</div>
 						)}
 					</>
