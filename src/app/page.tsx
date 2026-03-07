@@ -1,65 +1,212 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import Link from 'next/link';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { fetchAllPokemonAsync, fetchTypesAsync, fetchPokemonByTypeAsync, setFilterType, setSearch } from '@/store/slices/pokemonSlice';
+import { PokemonCard } from '@/components/PokemonCard';
+import { Filter } from '@/components/Filter';
+import { TechBackground } from '@/components/TechBackground';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+	const dispatch = useAppDispatch();
+	const { list, types, loading, error, filter } = useAppSelector((state) => state.pokemon);
+	const [displayLimit, setDisplayLimit] = useState(20);
+
+	const hasFetched = useRef(false);
+
+	useEffect(() => {
+		if (hasFetched.current) return;
+		if (list.length === 0 && !loading) {
+			hasFetched.current = true;
+			dispatch(fetchAllPokemonAsync());
+		}
+		if (types.length === 0 && !loading) {
+			dispatch(fetchTypesAsync());
+		}
+	}, [dispatch, list.length, types.length, loading]);
+
+	const handleTypeChange = (type: string | null) => {
+		dispatch(setFilterType(type));
+		setDisplayLimit(20);
+		if (type) {
+			dispatch(fetchPokemonByTypeAsync(type));
+		} else {
+			dispatch(fetchAllPokemonAsync());
+		}
+	};
+
+	const handleSearchChange = (value: string) => {
+		dispatch(setSearch(value));
+		setDisplayLimit(20);
+	};
+
+	const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+	const filteredList = useMemo(() => {
+		return list.filter((pokemon) => pokemon.name.toLowerCase().includes(filter.search.toLowerCase()));
+	}, [list, filter.search]);
+
+	const displayedList = useMemo(() => {
+		return filteredList.slice(0, displayLimit);
+	}, [filteredList, displayLimit]);
+
+	const loadMore = useCallback(() => {
+		if (isLoadingMore) return;
+		setIsLoadingMore(true);
+		// Simulate network delay for better UX and to prevent spam scrolling
+		setTimeout(() => {
+			setDisplayLimit((prev) => prev + 20);
+			setIsLoadingMore(false);
+		}, 1000);
+	}, [isLoadingMore]);
+
+	const observer = useRef<IntersectionObserver | null>(null);
+	const lastElementRef = useCallback(
+		(node: HTMLDivElement) => {
+			if (loading || isLoadingMore) return;
+			if (observer.current) observer.current.disconnect();
+			observer.current = new IntersectionObserver((entries) => {
+				if (entries[0].isIntersecting && displayedList.length < filteredList.length && !isLoadingMore) {
+					loadMore();
+				}
+			});
+			if (node) observer.current.observe(node);
+		},
+		[loading, isLoadingMore, displayedList.length, filteredList.length, loadMore],
+	);
+
+	const [showBackToTop, setShowBackToTop] = useState(false);
+
+	useEffect(() => {
+		const handleScroll = () => {
+			if (window.scrollY > 300) {
+				setShowBackToTop(true);
+			} else {
+				setShowBackToTop(false);
+			}
+		};
+
+		window.addEventListener('scroll', handleScroll);
+		return () => window.removeEventListener('scroll', handleScroll);
+	}, []);
+
+	const scrollToTop = () => {
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	};
+
+	if (error)
+		return (
+			<div className='flex justify-center items-center min-h-screen bg-error/10'>
+				<div className='bg-base-100 p-8 rounded-2xl shadow-xl text-center'>
+					<div className='text-error text-6xl mb-4'>⚠️</div>
+					<h2 className='text-2xl font-bold text-base-content mb-2'>Oops! Something went wrong</h2>
+					<p className='text-base-content/60'>{error}</p>
+				</div>
+			</div>
+		);
+
+	return (
+		<main className='min-h-screen text-base-content relative'>
+			<TechBackground />
+			<div className='sticky top-0 z-50 bg-base-100/80 backdrop-blur-md border-b border-base-200/50 w-full shadow-sm'>
+				<div className='container mx-auto px-4 py-4 max-w-[1600px]'>
+					<div className='flex flex-col md:flex-row items-center justify-between gap-4 mb-4'>
+						<div className='text-center md:text-left'>
+							<h1 className='text-3xl font-extrabold text-base-content tracking-tight'>Pokédex</h1>
+							<p className='text-sm text-base-content/60'>Search for any Pokémon that exists on the planet</p>
+						</div>
+						<Link href='/dashboard' className='btn btn-primary btn-sm gap-2'>
+							<svg
+								xmlns='http://www.w3.org/2000/svg'
+								className='h-5 w-5'
+								fill='none'
+								viewBox='0 0 24 24'
+								stroke='currentColor'
+							>
+								<path
+									strokeLinecap='round'
+									strokeLinejoin='round'
+									strokeWidth={2}
+									d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'
+								/>
+							</svg>
+							Dashboard
+						</Link>
+					</div>
+
+					<Filter
+						types={types}
+						currentType={filter.type}
+						searchValue={filter.search}
+						onTypeChange={handleTypeChange}
+						onSearchChange={handleSearchChange}
+					/>
+				</div>
+			</div>
+
+			<div className='container mx-auto px-4 py-8 max-w-[1600px]'>
+				{loading && list.length === 0 ? (
+					<div className='flex justify-center items-center h-64'>
+						<div className='animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-red-600' />
+					</div>
+				) : (
+					<>
+						<motion.div layout className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6'>
+							<AnimatePresence>
+								{displayedList.map((pokemon, index) => (
+									<motion.div
+										key={pokemon.name}
+										initial={{ opacity: 0, y: 20 }}
+										whileInView={{ opacity: 1, y: 0 }}
+										viewport={{ once: true, margin: '-50px' }}
+										exit={{ opacity: 0 }}
+										transition={{ duration: 0.3, delay: (index % 10) * 0.05 }}
+									>
+										<PokemonCard name={pokemon.name} url={pokemon.url} />
+									</motion.div>
+								))}
+							</AnimatePresence>
+						</motion.div>
+
+						{filteredList.length === 0 && !loading && (
+							<div className='text-center mt-20'>
+								<p className='text-xl text-gray-400 font-medium'>No Pokémon found.</p>
+							</div>
+						)}
+
+						{displayedList.length < filteredList.length && (
+							<div ref={lastElementRef} className='flex justify-center items-center mt-12 py-8'>
+								<div className='animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-red-600' />
+							</div>
+						)}
+					</>
+				)}
+
+				<AnimatePresence>
+					{showBackToTop && (
+						<motion.button
+							initial={{ opacity: 0, scale: 0.5 }}
+							animate={{ opacity: 1, scale: 1 }}
+							exit={{ opacity: 0, scale: 0.5 }}
+							onClick={scrollToTop}
+							className='fixed bottom-8 right-8 btn btn-primary btn-circle shadow-lg z-50'
+							aria-label='Back to top'
+						>
+							<svg
+								xmlns='http://www.w3.org/2000/svg'
+								className='h-6 w-6'
+								fill='none'
+								viewBox='0 0 24 24'
+								stroke='currentColor'
+							>
+								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M5 10l7-7m0 0l7 7m-7-7v18' />
+							</svg>
+						</motion.button>
+					)}
+				</AnimatePresence>
+			</div>
+		</main>
+	);
 }
