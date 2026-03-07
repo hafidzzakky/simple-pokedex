@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Ruler, Weight, Zap, Shield, BarChart3, X, Activity, Target, Crosshair, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TYPE_COLORS } from '@/utils/constants';
+import { PokemonTypeBadge } from '@/components/atoms/PokemonTypeBadge';
 
 interface PokemonDetailProps {
 	pokemon: PokemonDetailType;
@@ -242,14 +243,11 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 								</h3>
 								<div className='flex flex-wrap gap-2'>
 									{pokemon.weaknesses.map((weakness) => (
-										<span
+										<PokemonTypeBadge
 											key={weakness}
-											className={`${
-												TYPE_COLORS[weakness] || 'bg-gray-400'
-											} bg-opacity-90 text-white px-3 py-1 rounded-lg text-xs font-bold capitalize shadow-sm`}
-										>
-											{weakness}
-										</span>
+											type={weakness}
+											className='bg-opacity-90 px-3 py-1 rounded-lg text-xs font-bold'
+										/>
 									))}
 								</div>
 							</motion.div>
@@ -323,12 +321,11 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 
 							<div className='flex gap-3 mb-8'>
 								{pokemon.types.map((type) => (
-									<span
+									<PokemonTypeBadge
 										key={type}
-										className={`${TYPE_COLORS[type] || 'bg-gray-400'} text-white px-6 py-2 rounded-full text-base font-bold capitalize shadow-md transform hover:scale-105 transition-transform`}
-									>
-										{type}
-									</span>
+										type={type}
+										className='px-6 py-2 rounded-full text-base font-bold transform hover:scale-105 transition-transform'
+									/>
 								))}
 							</div>
 

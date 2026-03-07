@@ -4,9 +4,9 @@ import { useEffect, use } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchPokemonDetailAsync, fetchEvolutionChainAsync } from '@/store/slices/pokemonSlice';
-import { PokemonDetail } from '@/components/PokemonDetail';
-import { EvolutionChain } from '@/components/EvolutionChain';
-import { TechBackground } from '@/components/TechBackground';
+import { PokemonDetail } from '@/components/organisms/PokemonDetail';
+import { EvolutionChain } from '@/components/organisms/EvolutionChain';
+import { TechBackground } from '@/components/templates/TechBackground';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
@@ -27,9 +27,7 @@ export default function PokemonDetailPage({ params }: PageProps) {
 
 	// Support both name and ID lookup
 	const isId = !isNaN(Number(name));
-	const pokemon = isId
-		? Object.values(pokemonDetails).find((p) => p.id === Number(name))
-		: pokemonDetails[name.toLowerCase()];
+	const pokemon = isId ? Object.values(pokemonDetails).find((p) => p.id === Number(name)) : pokemonDetails[name.toLowerCase()];
 
 	const evolutionChain = pokemon?.evolutionChainUrl ? evolutionChains[pokemon.evolutionChainUrl] : null;
 

@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { PokemonCard } from '@/components/PokemonCard';
+import { PokemonCard } from '../../components/organisms/PokemonCard';
 import { getPokemonBasicInfo } from '@/services/pokemon';
 
 // Mock the service

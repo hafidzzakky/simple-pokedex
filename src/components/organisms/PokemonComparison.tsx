@@ -3,9 +3,9 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { SearchablePokemonSelector } from './SearchablePokemonSelector';
+import { SearchablePokemonSelector } from '@/components/molecules/SearchablePokemonSelector';
+import { PokemonTypeBadge } from '@/components/atoms/PokemonTypeBadge';
 import { DashboardPokemonDetail } from '@/types/pokemon';
-import { TYPE_COLORS } from '@/utils/constants';
 
 interface PokemonComparisonProps {
 	pokemonList: DashboardPokemonDetail[];
@@ -82,12 +82,7 @@ export const PokemonComparison = ({ pokemonList }: PokemonComparisonProps) => {
 								</h2>
 								<div className='flex gap-1 mt-2 justify-center flex-wrap'>
 									{pokemon1.types.map((t) => (
-										<span
-											key={t}
-											className={`badge badge-sm text-white border-none capitalize ${TYPE_COLORS[t] || 'bg-gray-400'}`}
-										>
-											{t}
-										</span>
+										<PokemonTypeBadge key={t} type={t} className='badge badge-sm border-none' />
 									))}
 								</div>
 							</div>
@@ -196,12 +191,7 @@ export const PokemonComparison = ({ pokemonList }: PokemonComparisonProps) => {
 								</h2>
 								<div className='flex gap-1 mt-2 justify-center flex-wrap'>
 									{pokemon2.types.map((t) => (
-										<span
-											key={t}
-											className={`badge badge-sm text-white border-none capitalize ${TYPE_COLORS[t] || 'bg-gray-400'}`}
-										>
-											{t}
-										</span>
+										<PokemonTypeBadge key={t} type={t} className='badge badge-sm border-none' />
 									))}
 								</div>
 							</div>

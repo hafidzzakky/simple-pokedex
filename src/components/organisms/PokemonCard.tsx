@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { getPokemonBasicInfo } from '@/services/pokemon';
-import { TYPE_COLORS } from '@/utils/constants';
+import { PokemonTypeBadge } from '@/components/atoms/PokemonTypeBadge';
 
 interface PokemonCardProps {
 	name: string;
@@ -61,18 +61,9 @@ export const PokemonCard = ({ name, url }: PokemonCardProps) => {
 					<h3 className='text-lg font-bold capitalize text-base-content tracking-tight mb-2'>{name}</h3>
 					<div className='flex gap-1 justify-center flex-wrap'>
 						{types.length > 0
-							? types.map((type) => (
-									<span
-										key={type}
-										className={`${
-											TYPE_COLORS[type] || 'bg-gray-500'
-										} text-white text-[10px] px-2 py-0.5 rounded-full capitalize shadow-sm`}
-									>
-										{type}
-									</span>
-							  ))
+							? types.map((type) => <PokemonTypeBadge key={type} type={type} />)
 							: // Skeleton loader for types
-							  [1, 2].map((i) => <div key={i} className='h-4 w-12 bg-base-300 rounded-full animate-pulse' />)}
+								[1, 2].map((i) => <div key={i} className='h-4 w-12 bg-base-300 rounded-full animate-pulse' />)}
 					</div>
 				</div>
 			</motion.div>

@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { TechBackground } from '@/components/TechBackground';
-import { DashboardControls } from '@/components/DashboardControls';
+import { TechBackground } from '@/components/templates/TechBackground';
+import { DashboardControls } from '@/components/molecules/DashboardControls';
 import {
 	BarChart,
 	Bar,
@@ -23,7 +23,8 @@ import {
 	Line,
 } from 'recharts';
 
-import { PokemonComparison } from '@/components/PokemonComparison';
+import { PokemonComparison } from '@/components/organisms/PokemonComparison';
+import { PokemonTypeBadge } from '@/components/atoms/PokemonTypeBadge';
 import { DashboardPokemonDetail } from '@/types/pokemon';
 import { GEN_RANGES, TYPE_COLORS } from '@/utils/constants';
 
@@ -468,12 +469,7 @@ export default function Dashboard() {
 											<div className='font-bold capitalize text-base-content'>{p.name}</div>
 											<div className='flex gap-1 mt-1'>
 												{p.types.map((t) => (
-													<span
-														key={t}
-														className={`badge badge-xs text-white border-none ${TYPE_COLORS[t] || 'bg-gray-400'}`}
-													>
-														{t}
-													</span>
+													<PokemonTypeBadge key={t} type={t} className='badge badge-xs border-none' />
 												))}
 											</div>
 										</div>
