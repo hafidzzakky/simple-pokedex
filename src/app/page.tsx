@@ -199,22 +199,23 @@ export default function Home() {
 					</div>
 				) : (
 					<>
-						<motion.div layout className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6'>
-							<AnimatePresence>
+						<div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6'>
+							<AnimatePresence mode='popLayout'>
 								{displayedList.map((pokemon, index) => (
 									<motion.div
 										key={pokemon.name}
+										layout
 										initial={{ opacity: 0, y: 20 }}
 										whileInView={{ opacity: 1, y: 0 }}
 										viewport={{ once: true, margin: '-50px' }}
-										exit={{ opacity: 0 }}
+										exit={{ opacity: 0, scale: 0.9 }}
 										transition={{ duration: 0.3, delay: (index % 10) * 0.05 }}
 									>
 										<PokemonCard name={pokemon.name} url={pokemon.url} />
 									</motion.div>
 								))}
 							</AnimatePresence>
-						</motion.div>
+						</div>
 
 						{filteredList.length === 0 && !loading && (
 							<div className='text-center mt-20'>
