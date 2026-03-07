@@ -119,7 +119,7 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 							) : selectedMove ? (
 								<div>
 									{/* Header */}
-									<div className={`p-6 ${typeColors[selectedMove.type] || 'bg-gray-500'} relative overflow-hidden`}>
+									<div className={`p-6 ${TYPE_COLORS[selectedMove.type] || 'bg-gray-500'} relative overflow-hidden`}>
 										<div className='absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl' />
 										<div className='absolute -left-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl' />
 
@@ -245,7 +245,7 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 										<span
 											key={weakness}
 											className={`${
-												typeColors[weakness] || 'bg-gray-400'
+												TYPE_COLORS[weakness] || 'bg-gray-400'
 											} bg-opacity-90 text-white px-3 py-1 rounded-lg text-xs font-bold capitalize shadow-sm`}
 										>
 											{weakness}
@@ -325,7 +325,7 @@ export const PokemonDetail = ({ pokemon }: PokemonDetailProps) => {
 								{pokemon.types.map((type) => (
 									<span
 										key={type}
-										className={`${typeColors[type] || 'bg-gray-400'} text-white px-6 py-2 rounded-full text-base font-bold capitalize shadow-md transform hover:scale-105 transition-transform`}
+										className={`${TYPE_COLORS[type] || 'bg-gray-400'} text-white px-6 py-2 rounded-full text-base font-bold capitalize shadow-md transform hover:scale-105 transition-transform`}
 									>
 										{type}
 									</span>
