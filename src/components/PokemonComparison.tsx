@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { SearchablePokemonSelector } from './SearchablePokemonSelector';
@@ -14,6 +14,16 @@ interface PokemonComparisonProps {
 export const PokemonComparison = ({ pokemonList }: PokemonComparisonProps) => {
 	const [selectedId1, setSelectedId1] = useState<string>('');
 	const [selectedId2, setSelectedId2] = useState<string>('');
+	const defaultsApplied = useRef(false);
+
+	useEffect(() => {
+		if (!defaultsApplied.current && pokemonList.length > 0) {
+			const sortedById = [...pokemonList].sort((a, b) => a.id - b.id);
+			if (sortedById.length > 0) setSelectedId1(sortedById[0].name);
+			if (sortedById.length > 1) setSelectedId2(sortedById[1].name);
+			defaultsApplied.current = true;
+		}
+	}, [pokemonList]);
 
 	const pokemon1 = useMemo(() => pokemonList.find((p) => p.name === selectedId1), [pokemonList, selectedId1]);
 	const pokemon2 = useMemo(() => pokemonList.find((p) => p.name === selectedId2), [pokemonList, selectedId2]);
