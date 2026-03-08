@@ -10,7 +10,7 @@ import { TechBackground } from '@/components/atoms/TechBackground';
 import { PokeballLoader } from '@/components/atoms/PokeballLoader';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, LayoutDashboard, Users, Home } from 'lucide-react';
 
 interface PageProps {
 	params: Promise<{ name: string }>;
@@ -73,17 +73,37 @@ export default function PokemonDetailPage({ params }: PageProps) {
 	if (!pokemon) return null;
 
 	return (
-		<main className='min-h-screen text-base-content relative overflow-hidden py-12 px-4 md:px-8'>
+		<main className='min-h-screen text-base-content relative py-12 px-4 md:px-8 pb-24 md:pb-12'>
 			<TechBackground />
 			<div className='container mx-auto max-w-6xl relative z-10'>
-				<motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} className='mb-8'>
+				<motion.div
+					initial={{ opacity: 0, y: -20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.4 }}
+					className='mb-8 flex flex-col md:flex-row items-center justify-between gap-4 md:sticky md:top-4 md:z-50'
+				>
 					<Link
 						href={backHref}
-						className='inline-flex items-center gap-2 bg-base-100 px-5 py-3 rounded-full text-base-content font-bold hover:bg-base-200 hover:text-primary transition-all shadow-sm hover:shadow-md group border border-base-200'
+						className='inline-flex items-center gap-2 bg-base-100 px-5 py-3 rounded-full text-base-content font-bold hover:bg-base-200 hover:text-primary transition-all shadow-sm hover:shadow-md group border border-base-200 w-full md:w-auto justify-center md:justify-start'
 					>
 						<ArrowLeft className='w-5 h-5 group-hover:-translate-x-1 transition-transform' />
 						{backText}
 					</Link>
+
+					<div className='flex items-center gap-2 bg-base-100/80 backdrop-blur-md p-1.5 rounded-full border border-base-200 shadow-sm justify-center fixed bottom-6 left-1/2 -translate-x-1/2 z-50 shadow-xl w-auto md:static md:translate-x-0 md:shadow-sm'>
+						<Link href='/' className='btn btn-ghost btn-sm rounded-full flex gap-2 items-center' title='Home'>
+							<Home size={18} />
+							<span className='hidden sm:inline'>Home</span>
+						</Link>
+						<Link href='/dashboard' className='btn btn-ghost btn-sm rounded-full flex gap-2 items-center' title='Dashboard'>
+							<LayoutDashboard size={18} />
+							<span className='hidden sm:inline'>Dashboard</span>
+						</Link>
+						<Link href='/team' className='btn btn-ghost btn-sm rounded-full flex gap-2 items-center' title='Team Builder'>
+							<Users size={18} />
+							<span className='hidden sm:inline'>Team Builder</span>
+						</Link>
+					</div>
 				</motion.div>
 
 				<PokemonDetail pokemon={pokemon} />
